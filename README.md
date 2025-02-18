@@ -20,7 +20,7 @@ def eigval_M():
 eigval_M()
 
 
-# Function to compute the cofactor of an element in a matrix
+### Function to compute the cofactor of an element in a matrix
 def cofactor(matrix, i, j):
     submatrix = np.delete(matrix, i, axis=0)  # Remove the i-th row
     submatrix = np.delete(submatrix, j, axis=1)  # Remove the j-th column
