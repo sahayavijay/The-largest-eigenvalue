@@ -1,4 +1,4 @@
-#%%
+###%%
 import sympy as sp 
 import numpy as np
 lambda_ = sp.symbols('lambda')
@@ -26,7 +26,7 @@ def cofactor(matrix, i, j):
     submatrix = np.delete(submatrix, j, axis=1)  # Remove the j-th column
     return (-1) ** (i + j) * np.linalg.det(submatrix)
 
-# Function to compute the desired summation
+### Function to compute the desired summation
 def summation(matrix_Delta_, matrix_L):
     n = matrix_Delta_.shape[0]  # Assume square matrices
     sum_top = 0
@@ -49,14 +49,14 @@ def summation(matrix_Delta_, matrix_L):
     else:
         return float('inf')  # Or handle this case appropriately
 
-# Example matrices (replace with your own)
+### Example matrices (replace with your own)
 matrix_Delta_ = np.array([[0, 0],[0, 1]])
 matrix_L = np.array([[-1,2],[1,-2],])
 
-# Calculate the summation
+### Calculate the summation
 result = summation(matrix_Delta_, matrix_L)
 print("Result:", result)
 
 
-# %%
+### %%
 
