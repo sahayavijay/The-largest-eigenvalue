@@ -1,10 +1,29 @@
-###%%
+#%%
 import sympy as sp 
 import numpy as np
 lambda_ = sp.symbols('lambda')
 Delta_=sp.symbols('delta')
 L=sp.symbols('L')
+"""
+Try writing a code in this format to check 
+"""
 
+def decompose_M(M):
+    return L, Delta
+
+def analytical_formula_type_1(L, Delta):
+    lambda0 = ... some calculations
+    return lambda0
+
+def comparison(M)
+    L,Delta = decompose_M(M)
+    true_lambda0 = eigval_M(M)
+    analytical_lambda0 = analytical_formula_type_1(L,Delta)
+    return true_lambda0, analytical_lambda0
+N = 2
+M = make some random NxN matrix
+comparison(M)
+#%%
 def eigval_M():
     M = sp.Matrix([[-1-lambda_, 2], [1, -1-lambda_]])
     polynomial=M.det()
@@ -20,7 +39,7 @@ def eigval_M():
 eigval_M()
 
 
-### Function to compute the cofactor of an element in a matrix
+#%% Function to compute the cofactor of an element in a matrix
 def cofactor(matrix, i, j):
     submatrix = np.delete(matrix, i, axis=0)  # Remove the i-th row
     submatrix = np.delete(submatrix, j, axis=1)  # Remove the j-th column
@@ -58,5 +77,5 @@ result = summation(matrix_Delta_, matrix_L)
 print("Result:", result)
 
 
-### %%
+#%%
 
