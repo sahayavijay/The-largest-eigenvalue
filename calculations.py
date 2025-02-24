@@ -33,20 +33,29 @@ from fractions import Fraction
 lambda_ = sp.symbols('lambda')
 Delta_=sp.symbols('delta')
 L=sp.symbols('L')
-
-def eigval_M():
-    M = sp.Matrix([[-1-lambda_, 0, 2], [1, -1-lambda_, 0], [0, 1, -1-lambda_]])
-    polynomial=M.det()
+def eigval_M(n):
+    random_matrix = np.random.rand(n, n)
+    random_matrix_sympy = sp.Matrix(random_matrix)
+    identity_matrix = sp.eye(n)
+    # Define the matrix (A - lambda * I)
+    matrix_lambda_I = random_matrix_sympy - lambda_ * identity_matrix
+    # Calculate the determinant of (A - lambda * I)
+    polynomial = matrix_lambda_I.det()
+    # Simplify the polynomial to avoid complex rational expressions
+    simplified_polynomial = sp.simplify(polynomial)
+    # Expand the polynomial (this may help to avoid division by lambda)
+    expanded_polynomial = sp.expand(simplified_polynomial)
     max_degree=1
-    poly_terms = sp.Poly(polynomial, lambda_).terms()
+    poly_terms = sp.Poly(expanded_polynomial, lambda_).terms()
     truncated_polynomial = sum(coef * lambda_**deg[0] for deg, coef in poly_terms if deg[0] <= max_degree)
     largest_eigenvalue = sp.solve(truncated_polynomial, lambda_)
-    print(M)
-    print("Polynomial:",polynomial)
-    print("Truncated Polynomial:",truncated_polynomial)
+    print("Random matrix (A):", random_matrix)
+    print("Matrix (A - lambda * I):", matrix_lambda_I)
+    print("Determinant of (A - lambda * I):", expanded_polynomial)
+    print("Truncated Polynomial:", truncated_polynomial)
     print(f"The largest eigenvalue is: {largest_eigenvalue[0]}")
     
-eigval_M()
+eigval_M(3)
 
 
 # Function to compute the cofactor of an element in a matrix
