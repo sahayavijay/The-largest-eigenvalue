@@ -8,6 +8,22 @@ L=sp.symbols('L')
 Try writing a code in this format to check 
 """
 
+
+"""
+Comment 20250225: Try using numpy. Calculating lambda0 is only 2 rows.
+"""
+M = np.array([
+    [1,0],
+    [0,1]])
+eigenvalues, eigenvectors = np.linalg.eig(M)
+lambda0 = np.max(eigenvalues)
+print(lambda0)
+
+"""
+I am looking forward to your comparison between numerical and analytical lambda0 values
+"""
+
+#%%
 def decompose_M(M):
     return L, Delta
 
@@ -23,7 +39,7 @@ def comparison(M)
 N = 2
 M = make some random NxN matrix
 comparison(M)
-#%%
+
 
 
 #%%
@@ -36,9 +52,9 @@ L=sp.symbols('L')
 def eigval_M(n):
     random_matrix = np.random.rand(n, n)
     random_matrix_sympy = sp.Matrix(random_matrix)
-    identity_matrix = sp.eye(n)
+    I = sp.eye(n)
     # Define the matrix (A - lambda * I)
-    matrix_lambda_I = random_matrix_sympy - lambda_ * identity_matrix
+    matrix_lambda_I = random_matrix_sympy - lambda_ * I
     # Calculate the determinant of (A - lambda * I)
     polynomial = matrix_lambda_I.det()
     # Simplify the polynomial to avoid complex rational expressions
