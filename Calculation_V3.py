@@ -1,76 +1,87 @@
-#%% 
+#%%
 import sympy as sp
 import numpy as np
+from threading import Thread
 
 # Define symbolic variables
 lambda_ = sp.symbols('lambda')
 Delta = sp.symbols('delta')
 L = sp.symbols('L')
 
-n=5
+n=3
 
-# Generate a L matrix n by n
-L = np.random.rand(n, n)
+#Generate L matrix
+L=np.random.rand(n,n)
+
 for i in range(n):
-    # Sum all elements in the column except for the diagonal element (matrix[i, i])
     column_sum = np.sum(L[:, i]) - L[i, i]
-    L[i, i] = -column_sum  # Update the diagonal element
+    L[i, i] = -column_sum 
 print('L matrix:', L)
-# Create a Delta matrix of zeros with shape (n, n)
+
+#Generate Delta matrix
 Delta = np.zeros((n, n))
 
-scaling_factor = 0.1
 # Assign a random value to the last entry (bottom-right corner)
-random_value = np.random.rand()  # You can modify this to any range or value
+scaling_factor = 0.1
+
+random_value = np.random.rand()  
+
 Delta[n-1, n-1] = random_value*scaling_factor
 
 print('Delta Matrix:', Delta)
 
-# Generate the identity matrix
-identity_matrix = sp.eye(n)
+#Adding L and Delta matrices
+M = L+Delta
 
-# Define the matrix ((L+Delta) - lambda * I)
-matrix_lambda_I = (L + Delta) - lambda_ * identity_matrix
+print('M:', M)
 
-#Obtaining eigenvalue without removing higher order terms
-eigenvalues = np.linalg.eigvals(L + Delta)
+#calculating eigenvalues of matrix M
+def eigval_NMn():
+    eigval_n=np.linalg.eigvals(M)
+    print('eigval n:', eigval_n)
 
-print('eigval for lamda^(n):', eigenvalues)
-# Get the characteristic polynomial by calculating the determinant
+eigval_NMn()
 
-#Obtaining eigenvalue with removing higher order terms
-polynomial = matrix_lambda_I.det()
+#calculating a largest eigenvalue of M
+def eigval_NM1():
+    # Generate the identity matrix
+    identity_matrix = sp.eye(n)
 
-simplified_polynomial = sp.simplify(polynomial)
+    # Define the matrix ((L+Delta) - lambda * I)
+    matrix_lambda_I = (L + Delta) - lambda_ * identity_matrix
+    polynomial = matrix_lambda_I.det()
 
-# Check if the simplified expression is a rational function (i.e., fraction)
-numerator, denominator = sp.fraction(simplified_polynomial)
+    simplified_polynomial = sp.simplify(polynomial)
 
-# Now, treat the numerator and denominator separately as polynomials
-# Simplify both numerator and denominator
-simplified_numerator = sp.simplify(numerator)
-simplified_denominator = sp.simplify(denominator)
+    # Check if the simplified expression is a rational function (i.e., fraction)
+    numerator, denominator = sp.fraction(simplified_polynomial)
 
-# You can treat the denominator as a polynomial if needed
-denom_poly = sp.Poly(simplified_denominator, lambda_)
+    # Now, treat the numerator and denominator separately as polynomials
+    # Simplify both numerator and denominator
+    simplified_numerator = sp.simplify(numerator)
+    simplified_denominator = sp.simplify(denominator)
 
-# Create a polynomial object for the numerator if needed (useful for eigenvalue calculation)
-numerator_poly = sp.Poly(simplified_numerator, lambda_)
+    # You can treat the denominator as a polynomial if needed
+    denom_poly = sp.Poly(simplified_denominator, lambda_)
 
-# Set the maximum degree of lambda to remove higher order terms
-max_degree = 1
+    # Create a polynomial object for the numerator if needed (useful for eigenvalue calculation)
+    numerator_poly = sp.Poly(simplified_numerator, lambda_)
 
-# Extract terms of the numerator polynomial
-numerator_terms = numerator_poly.terms()
+    # Set the maximum degree of lambda to remove higher order terms
+    max_degree = 1
 
-# Remove higher-order terms beyond the specified maximum degree
-truncated_numerator = sum(coef * lambda_**deg[0] for deg, coef in numerator_terms if deg[0] <= max_degree)
+    # Extract terms of the numerator polynomial
+    numerator_terms = numerator_poly.terms()
 
-# Solve for the largest eigenvalue (after truncating higher-order terms)
-largest_eigenvalue = sp.solve(truncated_numerator, lambda_)
+    # Remove higher-order terms beyond the specified maximum degree
+    truncated_numerator = sum(coef * lambda_**deg[0] for deg, coef in numerator_terms if deg[0] <= max_degree)
 
-# Print the result
-print('eigval for lamda^(1):', largest_eigenvalue)
+    # Solve for the largest eigenvalue (after truncating higher-order terms)
+    largest_eigenvalue = sp.solve(truncated_numerator, lambda_)
+
+    print('largest eigval:', largest_eigenvalue)
+
+eigval_NM1()
 
 # Function to compute the cofactor of an element in a matrix
 def cofactor(matrix, i, j):
@@ -78,7 +89,7 @@ def cofactor(matrix, i, j):
     submatrix = np.delete(submatrix, j, axis=1)  # Remove the j-th column
     return (-1) ** (i + j) * np.linalg.det(submatrix)
 
-# Function to compute the desired summation
+#Calculating the function f and g
 def summation(Delta, L):
     n = Delta.shape[0]  # Assume square matrices
     sum_top = 0
@@ -116,8 +127,6 @@ def summation(Delta, L):
         print('fun g:', result2)
     else:
         return float('inf')  # Or handle this case appropriately
-
+    
 # Calculate the summation
 summation(Delta, L)
-
-# %%
