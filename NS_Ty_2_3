@@ -1,0 +1,98 @@
+#%%
+import numpy as np
+import sympy as sp
+import matplotlib.pyplot as plt
+lambda_ = sp.Symbol('lambda')
+# Parameters
+n = 3 # Matrix size (nxn)
+num_matrices = 100  # Number of matrices to generate
+m=2
+r=m+n+1
+# Lists to store the results for plotting
+values_f_I = []  # Function f from summation for case I
+values_g_I = []  # Function g from summation for case I
+
+# Function to compute the cofactor of an element in a matrix
+def cofactor(matrix, i, j):
+    submatrix = np.delete(matrix, i, axis=0)  # Remove the i-th row
+    submatrix = np.delete(submatrix, j, axis=1)  # Remove the j-th column
+    return (-1) ** (i + j) * np.linalg.det(submatrix)
+
+# Function to calculate summation f for both cases I and II
+def f(Delta, L):
+    n = Delta.shape[0]  # Assume square matrices
+    sum_top_I = 0
+
+    cofactor_of_sum_I = [] 
+    matrix_sum_I = L + Delta
+    for i in range(n):
+        Delta__ii = Delta[i, i]
+        cofactor_of_sum_I_i = cofactor(matrix_sum_I, i, i)  
+        cofactor_of_sum_I.append(cofactor_of_sum_I_i)
+        #function f1 and f2 including cofactor of Delta
+        sum_top_I += Delta__ii * cofactor_of_sum_I_i  
+    if sum(cofactor_of_sum_I) != 0:
+        result1_I = sum_top_I / sum(cofactor_of_sum_I)
+        return result1_I
+    else:
+        return float('inf'), float('inf')
+
+# Function to calculate summation g for both cases I and II
+def g(Delta, L):
+    n = Delta.shape[0]
+    sum_top_1_I = 0
+    cofactor_of_sum_1 = []
+
+    for i in range(n):
+        Delta__ii = Delta[i, i]
+        cofactor_of_L = cofactor(L, i, i) 
+        cofactor_of_sum_1.append(cofactor_of_L)
+        #function g1 and g2 not including cofactor of Delta
+        sum_top_1_I += Delta__ii * cofactor_of_L  
+    if sum(cofactor_of_sum_1) != 0:
+        result2_I = sum_top_1_I / sum(cofactor_of_sum_1)
+        return result2_I
+    else:
+        return float('inf'), float('inf')
+    
+#Generate L matrix   
+L=np.random.rand(m+n+1,m+n+1)   
+def L_matrix(r):
+    for i in range(r):
+        column_sum = np.sum(L[:, i]) - L[i, i]
+        L[i, i] = -column_sum 
+    print('L matrix:', L)
+    return
+L_matrix(r)
+
+#Genarate Delta matrix
+Delta = np.zeros((m+n+1,m+n+1))
+# Loop to generate matrices and compute the eigenvalues and summation
+for _ in range(num_matrices):
+    
+    scaling_factor = 0.999999999999999
+    random_value = np.random.rand()  
+    Delta[0, 0] = random_value * scaling_factor
+    print("Delta:", Delta)
+    # Compute the summation values
+    result_f_I = f(Delta, L)
+    result_g_I = g(Delta, L)
+
+    values_f_I.append(result_f_I)
+    values_g_I.append(result_g_I)
+    
+#Plot the function f and g against n
+x = np.linspace(0, r, 100)
+
+y_f = values_f_I
+y_g = values_g_I
+
+plt.plot(x, y_f, label='first formula fun f')
+plt.plot(x, y_g, label='second formula fun g')
+plt.xlabel('n')
+plt.ylabel(r'$\lambda$')
+plt.title('Comparison of Two Functions')
+plt.legend()
+plt.grid(True)
+plt.show()
+#%%
